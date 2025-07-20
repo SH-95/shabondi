@@ -4,11 +4,13 @@ import Header from "./components/Header";
 import AttendanceTimer from "./components/AttendanceTimer";
 import AttendanceStats from "./components/AttendanceStats";
 import AttendanceHistory from "./components/AttendanceHistory";
+import AttendanceDashboard from "./components/AttendanceDashboard"; // 새로 추가
 import useAttendance from "./hooks/useAttendance";
 import { formatTime } from "./utils/timeUtils";
 
 const App = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [currentView, setCurrentView] = useState("timer"); // 새로 추가
 
   const {
     currentTime,
@@ -41,33 +43,45 @@ const App = () => {
           title="勤怠管理システム"
           isDarkMode={isDarkMode}
           toggleDarkMode={toggleDarkMode}
+          currentView={currentView}
+          setCurrentView={setCurrentView} // 메뉴 전환 함수 전달
         />
 
-        <Grid cols={2} className="mb-8">
-          <AttendanceTimer
-            currentTime={currentTime}
-            isWorking={isWorking}
-            isOnBreak={isOnBreak}
-            formatTime={formatTime}
-            onStartWork={handleStartWork}
-            onEndWork={handleEndWork}
-            onStartBreak={handleStartBreak}
-            onEndBreak={handleEndBreak}
-            isDarkMode={isDarkMode}
-          />
+        {/* 기존 타이머 뷰 */}
+        {currentView === "timer" && (
+          <>
+            <Grid cols={2} className="mb-8">
+              <AttendanceTimer
+                currentTime={currentTime}
+                isWorking={isWorking}
+                isOnBreak={isOnBreak}
+                formatTime={formatTime}
+                onStartWork={handleStartWork}
+                onEndWork={handleEndWork}
+                onStartBreak={handleStartBreak}
+                onEndBreak={handleEndBreak}
+                isDarkMode={isDarkMode}
+              />
 
-          <AttendanceStats
-            totalWorkTime={totalWorkTime}
-            totalBreakTime={totalBreakTime}
-            formatDuration={formatDuration}
-            isDarkMode={isDarkMode}
-          />
-        </Grid>
+              <AttendanceStats
+                totalWorkTime={totalWorkTime}
+                totalBreakTime={totalBreakTime}
+                formatDuration={formatDuration}
+                isDarkMode={isDarkMode}
+              />
+            </Grid>
 
-        <AttendanceHistory
-          attendanceHistory={attendanceHistory}
-          isDarkMode={isDarkMode}
-        />
+            <AttendanceHistory
+              attendanceHistory={attendanceHistory}
+              isDarkMode={isDarkMode}
+            />
+          </>
+        )}
+
+        {/* 새로운 출결 관리 뷰 */}
+        {currentView === "dashboard" && (
+          <AttendanceDashboard isDarkMode={isDarkMode} />
+        )}
       </Container>
     </div>
   );
